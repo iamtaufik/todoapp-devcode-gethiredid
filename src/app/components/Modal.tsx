@@ -1,10 +1,9 @@
 'use client';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { createRoot } from 'react-dom/client';
 
 type Props = {
   isOpen?: boolean;
-  isLoading?: boolean;
   title: string;
   item: string;
   positiveText?: string;
@@ -48,17 +47,12 @@ const Modal = (props: Props) => {
                 </button>
                 <button
                   data-cy="modal-delete-confirm-button"
-                  className={`text-sm bg-[#ED4C5C] px-6 py-3 rounded-3xl text-white ${!props.onPositiveClick && 'hidden'}`}
+                  className={`text-sm bg-[#ED4C5C] px-6 py-3 text-center rounded-3xl text-white ${!props.onPositiveClick && 'hidden'}`}
                   onClick={() => {
                     props.onPositiveClick && props.onPositiveClick();
                     setIsOpen(false);
                   }}
                 >
-                  {props.isLoading && (
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-6 h-6">
-                      <path strokeLinecap="round" strokeLinejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
-                    </svg>
-                  )}
                   {props.positiveText || 'Ya'}
                 </button>
               </div>
@@ -77,18 +71,7 @@ export function ShowModal(props: Props) {
   alert.id = 'alert';
   document.body.appendChild(alert);
   const root = createRoot(alert);
-  root.render(
-    <Modal
-      isOpen={true}
-      isLoading={props.isLoading}
-      title={props.title}
-      item={props.item}
-      negativeText={props.negativeText}
-      positiveText={props.positiveText}
-      onNegativeClick={props.onNegativeClick}
-      onPositiveClick={props.onPositiveClick}
-    />
-  );
+  root.render(<Modal isOpen={true} title={props.title} item={props.item} negativeText={props.negativeText} positiveText={props.positiveText} onNegativeClick={props.onNegativeClick} onPositiveClick={props.onPositiveClick} />);
 }
 
 const ModalInfo = ({ title }: { title: string }) => {
@@ -129,4 +112,37 @@ export const ShowInfo = (title: 'Activity' | 'Item') => {
   document.body.appendChild(info);
   const root = createRoot(info);
   root.render(<ModalInfo title={title} />);
+};
+
+const InputModal = ({ children, width, height }: { children: React.ReactNode; width?: number; height?: number }) => {
+  return (
+    <div data-cy="modal-information" className={`relative z-10  `} aria-labelledby="modal-title" role="dialog" aria-modal="true">
+      <div className="fixed inset-0 transition-opacity bg-zinc-900 bg-opacity-40"></div>
+
+      <div className="fixed inset-0 z-10 overflow-y-auto ">
+        <div className="flex items-center justify-center min-h-full text-center sm:items-center sm:p-0">
+          <div className={`relative py-4 px-6 ${width ? `w-[${width}px]` : 'w-max'} ${height ? `h-[${height}px]` : 'h-full'} overflow-hidden text-left transition-all transform bg-white rounded-md shadow-xl`}>
+            {/* Content */}
+            {children}
+
+            {/* End Content */}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export const ShowInputModal = ( width?: number, height?: number) => {
+  const inputModal = document.createElement('div');
+  inputModal.id = 'inputModal';
+  document.body.appendChild(inputModal);
+  const root = createRoot(inputModal);
+  root.render(
+    <InputModal width={width} height={height}>
+      <div>
+        <input type="text" placeholder='Activity name' />
+      </div>
+    </InputModal>
+  );
 };

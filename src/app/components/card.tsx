@@ -2,22 +2,19 @@
 import Link from 'next/link';
 import { dateFormater } from '../libs/dateFormater';
 import { useActiviyStore } from '../store/zustand';
-import { ShowInfo, ShowModal } from './Modal';
+import { ShowInfo, ShowModal } from './modal';
 import axios from 'axios';
 import { useState } from 'react';
 
 const Card = ({ title, createdAt, activityItem, activityId }: { title: string; createdAt: string; activityItem: number; activityId: number }) => {
-  const [isLoading, setIsLoading] = useState(false);
   const { getActivities } = useActiviyStore();
   const handleDelete = (id: number) => {
     ShowModal({
       title: 'Apakah anda yakin ingin menghapus activity',
       item: title,
-      isLoading: isLoading,
       negativeText: 'Batal',
       positiveText: 'Hapus',
       onPositiveClick: async () => {
-        setIsLoading(true);
         try {
           await axios.delete(`https://todo.api.devcode.gethired.id/activity-groups/${id}`);
           ShowInfo('Activity');
@@ -25,8 +22,6 @@ const Card = ({ title, createdAt, activityItem, activityId }: { title: string; c
           getActivities();
         } catch (error) {
           console.log(error);
-        } finally {
-          setIsLoading(false);
         }
       },
     });
